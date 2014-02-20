@@ -25,8 +25,8 @@ $.widget( "mobile.checkboxradio", $.extend( {
 		mini: false,
 		wrapperClass: null,
 		enhanced: false,
-		iconpos: "left"
-
+		iconpos: "left",
+		innerClass: null
 	},
 	_create: function() {
 		var input = this.element,
@@ -107,7 +107,8 @@ $.widget( "mobile.checkboxradio", $.extend( {
 		this._setOptions({
 			"theme": this.options.theme,
 			"iconpos": this.options.iconpos,
-			"mini": this.options.mini
+			"mini": this.options.mini,
+			"innerClass": this.options.innerClass
 		});
 
 	},
@@ -300,6 +301,34 @@ $.widget( "mobile.checkboxradio", $.extend( {
 			label.removeClass( "ui-btn-icon-" + currentOptions.iconpos );
 		}
 		this._super( options );
+		if ( options.innerClass ) {
+			this._setInnerClasses( options.innerClass );
+		}
+	},
+
+	_setInnerClasses: function( innerClass ) {
+		var label = this.label,
+			currentOptions = this.options,
+			classes = innerClass.split( " " ),
+			i,
+			themeClass = /ui-btn-\b[a-z]\b/,
+			iconposClass = /ui-btn-icon-(left|right|top|bottom)/;
+
+		for ( i = classes.length - 1; i >= 0; i-- ) {
+			if ( themeClass.test( classes[i] ) ) {
+				label
+					.removeClass( "ui-btn-" + currentOptions.theme )
+					.addClass( classes[i] );
+				currentOptions.theme = classes[i].slice( 7 );
+			} else if ( iconposClass.test( classes[i] ) ) {
+				label
+					.removeClass( "ui-btn-icon-" + currentOptions.iconpos )
+					.addClass( classes[i] );
+				currentOptions.iconpos = classes[i].slice( 12 );
+			}
+		}
+
+		this.options = currentOptions;
 	}
 
 }, $.mobile.behaviors.formReset ) );
